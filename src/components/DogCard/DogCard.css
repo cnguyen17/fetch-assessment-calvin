@@ -1,0 +1,16 @@
+.dog-card {
+    cursor: pointer;
+}
+
+.dog-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+.heart-icon {
+    font-size: 20px;
+}
+
+.heart-icon.favorite {
+    color: #ff4d4f;
+} 

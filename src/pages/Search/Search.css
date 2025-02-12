@@ -1,0 +1,26 @@
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-title {
+    color: white;
+}
+
+.search-content {
+    padding: 24px;
+}
+
+.breed-filter-card {
+    margin-bottom: 24px;
+}
+
+.breed-select {
+    width: 100%;
+}
+
+.pagination {
+    margin-top: 24px;
+    text-align: center;
+} 
