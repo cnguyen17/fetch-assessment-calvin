@@ -23,4 +23,31 @@
 .pagination {
     margin-top: 24px;
     text-align: center;
+}
+
+.matched-dog {
+    text-align: center;
+}
+
+.matched-dog-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.match-message {
+    margin-top: 16px;
+    font-size: 16px;
+    color: #666;
+}
+
+.matched-dog h2 {
+    color: #1890ff;
+    margin: 16px 0;
+}
+
+.matched-dog p {
+    margin: 8px 0;
 } 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Card, Select, Button, Pagination, message, Space } from 'antd';
+import { Layout, Row, Card, Select, Button, Pagination, message, Space, Modal } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { getBreeds, searchDogs, getDogs, logoutUser } from '../../services/api';
+import { getBreeds, searchDogs, getDogs, logoutUser, getMatch } from '../../services/api';
 import { Dog } from '../../types/types';
 import DogCard from '../../components/DogCard/DogCard';
 import './Search.css';
@@ -18,8 +18,11 @@ const Search: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
     const [favorites, setFavorites] = useState<Set<string>>(new Set());
-    const pageSize = 20;
+    const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isGeneratingMatch, setIsGeneratingMatch] = useState(false);
 
     useEffect(() => {
         fetchBreeds();
@@ -35,13 +38,13 @@ const Search: React.FC = () => {
         }
     };
 
-    const fetchDogs = async (page = 1) => {
+    const fetchDogs = async (page = currentPage, size = pageSize) => {
         try {
             setLoading(true);
             const searchResponse = await searchDogs({
                 breeds: selectedBreeds,
-                size: pageSize,
-                from: ((page - 1) * pageSize).toString(),
+                size: size,
+                from: ((page - 1) * size).toString(),
                 sort: 'breed:asc'
             });
 
@@ -53,6 +56,17 @@ const Search: React.FC = () => {
             message.error('Failed to fetch dogs');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handlePageChange = (page: number, size?: number) => {
+        const newSize = size || pageSize;
+        if (size && size !== pageSize) {
+            setPageSize(size);
+            setCurrentPage(1); // Reset to first page when changing page size
+            fetchDogs(1, size);
+        } else {
+            fetchDogs(page, newSize);
         }
     };
 
@@ -76,6 +90,32 @@ const Search: React.FC = () => {
         setFavorites(newFavorites);
     };
 
+    const handleGenerateMatch = async () => {
+        try {
+            setIsGeneratingMatch(true);
+            // Convert Set to Array for the API call
+            const favoriteIds = Array.from(favorites);
+            
+            // Get the match ID
+            const matchResponse = await getMatch(favoriteIds);
+            const matchId = matchResponse.data.match;
+            
+            // Get the matched dog's details
+            const matchedDogResponse = await getDogs([matchId]);
+            setMatchedDog(matchedDogResponse.data[0]);
+            setIsModalVisible(true);
+        } catch (error) {
+            message.error('Failed to generate match');
+        } finally {
+            setIsGeneratingMatch(false);
+        }
+    };
+
+    const handleModalClose = () => {
+        setIsModalVisible(false);
+        setMatchedDog(null);
+    };
+
     return (
         <Layout>
             <Header className="search-header">
@@ -83,8 +123,9 @@ const Search: React.FC = () => {
                 <Space>
                     <Button 
                         type="primary" 
-                        onClick={() => {/* Handle match generation */}}
+                        onClick={handleGenerateMatch}
                         disabled={favorites.size === 0}
+                        loading={isGeneratingMatch}
                     >
                         Generate Match ({favorites.size})
                     </Button>
@@ -126,13 +167,46 @@ const Search: React.FC = () => {
                 </Row>
 
                 <Pagination
+                    className="pagination"
                     current={currentPage}
                     total={total}
                     pageSize={pageSize}
-                    onChange={(page) => fetchDogs(page)}
-                    className="pagination"
+                    onChange={handlePageChange}
+                    onShowSizeChange={handlePageChange}
+                    showSizeChanger
+                    pageSizeOptions={['10', '20', '50', '100']}
                 />
             </Content>
+
+            <Modal
+                title="Your Perfect Match!"
+                open={isModalVisible}
+                onCancel={handleModalClose}
+                footer={[
+                    <Button key="close" onClick={handleModalClose}>
+                        Close
+                    </Button>
+                ]}
+                width={600}
+            >
+                {matchedDog && (
+                    <div className="matched-dog">
+                        <img 
+                            className="matched-dog-image"
+                            src={matchedDog.img} 
+                            alt={matchedDog.name}
+                        />
+                        <h2>{matchedDog.name}</h2>
+                        <p><strong>Breed:</strong> {matchedDog.breed}</p>
+                        <p><strong>Age:</strong> {matchedDog.age}</p>
+                        <p><strong>Location:</strong> {matchedDog.zip_code}</p>
+                        <p className="match-message">
+                            Congratulations! You've been matched with {matchedDog.name}. 
+                            This lovely {matchedDog.breed} would make a perfect addition to your family!
+                        </p>
+                    </div>
+                )}
+            </Modal>
         </Layout>
     );
 };
