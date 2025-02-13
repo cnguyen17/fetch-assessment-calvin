@@ -10,14 +10,32 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
 
     const onFinish = async (values: { name: string; email: string }) => {
+        console.log('Attempting login with:', {
+            name: values.name,
+            email: values.email
+        });
+
         try {
             setLoading(true);
-            const response = await loginUser(values.name, values.email);
+            console.log('Sending login request...');
             
+            const response = await loginUser(values.name, values.email);
+            console.log('Login response status:', response.status);
+            console.log('Login response headers:', response.headers);
+            
+            // Check for successful login
             if (response.status === 200) {
+                console.log('Login successful - auth cookie should be set');
+                console.log('Note: HttpOnly cookie cannot be accessed via JavaScript');
+                
+                // Set authentication state
                 localStorage.setItem('isAuthenticated', 'true');
-                message.success('Login successful!');
-                navigate('/search');
+                message.success('Login successful! Welcome to Dog Finder');
+                
+                // Small delay to show the success message
+                setTimeout(() => {
+                    navigate('/search');
+                }, 500);
             } else {
                 throw new Error('Login failed');
             }

@@ -1,16 +1,57 @@
 .dog-card {
     cursor: pointer;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
 }
 
 .dog-image {
-    height: 200px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: top;
+}
+
+.heart-icon-container {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.heart-icon-container:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.1);
 }
 
 .heart-icon {
     font-size: 20px;
+    color: #999;
 }
 
 .heart-icon.favorite {
     color: #ff4d4f;
+}
+
+.dog-card.ant-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dog-card.ant-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 } 

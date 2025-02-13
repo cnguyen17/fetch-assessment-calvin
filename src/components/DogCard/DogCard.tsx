@@ -17,13 +17,21 @@ const DogCard: React.FC<DogCardProps> = ({ dog, isFavorite, onToggleFavorite }) 
                 className="dog-card"
                 hoverable
                 onClick={() => onToggleFavorite(dog.id)}
-                cover={<img alt={dog.name} src={dog.img} className="dog-image" />}
-                extra={
-                    isFavorite 
-                        ? <HeartFilled className="heart-icon favorite" />
-                        : <HeartOutlined className="heart-icon" />
+                cover={
+                    <div className="image-container">
+                        <img 
+                            alt={dog.name} 
+                            src={dog.img} 
+                            className="dog-image" 
+                        />
+                        <div className="heart-icon-container">
+                            {isFavorite 
+                                ? <HeartFilled className="heart-icon favorite" />
+                                : <HeartOutlined className="heart-icon" />
+                            }
+                        </div>
+                    </div>
                 }
-                
             >
                 <Card.Meta
                     title={dog.name}
