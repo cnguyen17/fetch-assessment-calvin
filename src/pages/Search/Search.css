@@ -141,7 +141,6 @@
     opacity: 0.65;
 }
 
-/* Add styles for enabled state */
 .match-button.ant-btn {
     background-color: #FBA919 !important;
     border-color: #FBA919 !important;
@@ -149,12 +148,12 @@
 
 .match-button.ant-btn:hover,
 .match-button.ant-btn:focus {
-    background-color: #E69B17 !important; /* Slightly darker shade for hover */
+    background-color: #E69B17 !important; 
     border-color: #E69B17 !important;
 }
 
 .match-button.ant-btn:active {
-    background-color: #D68D15 !important; /* Even darker for active state */
+    background-color: #D68D15 !important; 
     border-color: #D68D15 !important;
 }
 

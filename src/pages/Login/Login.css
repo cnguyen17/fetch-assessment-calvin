@@ -9,3 +9,22 @@
 .login-card {
     width: 400px;
 } 
+
+.login-header {
+    background: linear-gradient(to right, #7C1F6F, #4A0D44);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px; 
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.fetch-logo {
+    height: 40px;
+    margin-right: 16px; 
+}
