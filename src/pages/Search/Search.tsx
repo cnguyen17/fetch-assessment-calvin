@@ -7,30 +7,32 @@ import { Dog, Location } from '../../types/types';
 import DogCard from '../../components/DogCard/DogCard';
 import FetchLogo from '../../assets/Fetch-logo-white.png';
 import './Search.css';
-import useMediaQuery from '../../hooks/useMediaQuery';
+import useMediaQuery from 'react-responsive';
+
 
 const { Header, Content } = Layout;
 const { Option } = Select;
 
 const Search: React.FC = () => {
     const navigate = useNavigate();
-    const [breeds, setBreeds] = useState<string[]>([]);
-    const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
-    const [dogs, setDogs] = useState<Dog[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [total, setTotal] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(20);
-    const [favorites, setFavorites] = useState<Set<string>>(new Set());
-    const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isGeneratingMatch, setIsGeneratingMatch] = useState(false);
+    const [breeds, setBreeds] = useState<string[]>([]); // List of all available dog breeds
+    const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]); // Selected breeds for filtering
+    const [dogs, setDogs] = useState<Dog[]>([]); // List of dogs fetched based on filters
+    const [loading, setLoading] = useState(false); // Loading state for API calls
+    const [total, setTotal] = useState(0); // Total number of dogs available for the current search
+    const [currentPage, setCurrentPage] = useState(1); // Current page in pagination
+    const [pageSize, setPageSize] = useState(20); // Number of dogs displayed per page
+    const [favorites, setFavorites] = useState<Set<string>>(new Set()); // Set of favorite dog IDs
+    const [matchedDog, setMatchedDog] = useState<Dog | null>(null); // Dog matched for the user
+    const [isModalVisible, setIsModalVisible] = useState(false);  // Visibility of the match modal
+    const [isGeneratingMatch, setIsGeneratingMatch] = useState(false); 
     const [selectedZipCodes, setSelectedZipCodes] = useState<string[]>([]);
-    const [locations, setLocations] = useState<Location[]>([]);
-    const [searchingLocations, setSearchingLocations] = useState(false);
-    const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-    const isMobile = useMediaQuery('(max-width: 768px)');
+    const [locations, setLocations] = useState<Location[]>([]); // List of locations fetched based on search
+    const [searchingLocations, setSearchingLocations] = useState(false); 
+    const [isDrawerVisible, setIsDrawerVisible] = useState(false); // Visibility of the filters drawer on mobile
+    const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
+    
     useEffect(() => {
         fetchBreeds();
         fetchDogs();
@@ -46,6 +48,7 @@ const Search: React.FC = () => {
         }
     };
 
+    // Search for locations
     const handleLocationSearch = async (searchText: string) => {
         try {
             setSearchingLocations(true);
@@ -62,12 +65,14 @@ const Search: React.FC = () => {
         }
     };
 
+    // Trigger location search when the dropdown is opened and no locations are loaded
     const handleDropdownVisibleChange = (open: boolean) => {
         if (open && locations.length === 0) {
             handleLocationSearch('');
         }
     };
 
+    // Fetch dogs based on the current filters (breeds, zip codes, pagination)
     const fetchDogs = async (page = currentPage, size = pageSize) => {
         try {
             setLoading(true);
@@ -90,6 +95,7 @@ const Search: React.FC = () => {
         }
     };
 
+    // Handle pagination changes 
     const handlePageChange = (page: number, size?: number) => {
         const newSize = size || pageSize;
         if (size && size !== pageSize) {
@@ -101,6 +107,7 @@ const Search: React.FC = () => {
         }
     };
 
+    // Logout the user and redirect to the login page
     const handleLogout = async () => {
         try {
             await logoutUser();
@@ -111,6 +118,7 @@ const Search: React.FC = () => {
         }
     };
 
+    // Toggle a dog's favorite status
     const toggleFavorite = (dogId: string) => {
         const newFavorites = new Set(favorites);
         if (newFavorites.has(dogId)) {
@@ -121,10 +129,10 @@ const Search: React.FC = () => {
         setFavorites(newFavorites);
     };
 
+    // Generate a match 
     const handleGenerateMatch = async () => {
         try {
             setIsGeneratingMatch(true);
-            // Convert Set to Array for the API call
             const favoriteIds = Array.from(favorites);
             
             // Get the match ID
@@ -142,23 +150,25 @@ const Search: React.FC = () => {
         }
     };
 
+    // Make modal invisible
     const handleModalClose = () => {
         setIsModalVisible(false);
         setMatchedDog(null);
     };
 
+    // reset search 
     const handleSearch = () => {
-        fetchDogs(1); // Reset to first page and fetch with current filters
+        fetchDogs(1); 
     };
 
+    // Update selected breeds when the breed filter changes
     const handleBreedChange = (values: string[]) => {
         setSelectedBreeds(values);
-        // Remove the fetchDogs call here
     };
 
+    
     const handleLocationChange = (values: string[]) => {
         setSelectedZipCodes(values);
-        // Remove the fetchDogs call here
     };
 
     return (
@@ -385,4 +395,4 @@ const Search: React.FC = () => {
     );
 };
 
-export default Search; 
+export default Search;
